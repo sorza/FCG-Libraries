@@ -1,4 +1,4 @@
-﻿namespace FCG_Games.Domain.Games.Exceptions
+﻿namespace FCG_Libraries.Domain.Libraries.Exceptions
 {
     public class ErrorMessage
     {

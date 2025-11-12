@@ -1,5 +1,5 @@
-﻿using FCG_Games.Domain.Games.Exceptions;
-using FCG_Libraries.Domain.Libraries.Enums;
+﻿using FCG_Libraries.Domain.Libraries.Enums;
+using FCG_Libraries.Domain.Libraries.Exceptions;
 using FCG_Libraries.Domain.Libraries.Exceptions.Library;
 using FCG_Libraries.Domain.Shared;
 
@@ -56,11 +56,6 @@ namespace FCG_Libraries.Domain.Libraries.Entities
         }
 
         #endregion
-
-
-
-
-
 
     }
 }
