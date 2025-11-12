@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FCG-Libraries.Domain\FCG-Libraries.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
