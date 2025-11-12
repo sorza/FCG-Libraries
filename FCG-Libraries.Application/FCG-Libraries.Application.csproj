@@ -11,4 +11,8 @@
     <ProjectReference Include="..\FCG-Libraries.Domain\FCG-Libraries.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
+  </ItemGroup>
+
 </Project>
