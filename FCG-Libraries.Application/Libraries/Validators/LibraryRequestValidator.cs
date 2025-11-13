@@ -17,7 +17,7 @@ namespace FCG_Libraries.Application.Libraries.Validators
                 .IsInEnum().WithMessage("Status inválido.");
 
             RuleFor(x => x.PricePaid)
-                .GreaterThanOrEqualTo(0).When(x => x.PricePaid.HasValue).WithMessage("PricePaid não pode ser negativo.");
+                .GreaterThanOrEqualTo(0).When(x => x.PricePaid.HasValue).WithMessage("O preço não pode ser negativo.");
 
         }
     }

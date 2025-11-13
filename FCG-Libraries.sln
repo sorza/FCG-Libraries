@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Infrastructure", "FCG-Libraries.Infrastructure\FCG-Libraries.Infrastructure.csproj", "{BF8BF22B-2B76-44B9-AAB2-97100707F7DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Api", "FCG-Libraries.Api\FCG-Libraries.Api.csproj", "{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BF8BF22B-2B76-44B9-AAB2-97100707F7DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF8BF22B-2B76-44B9-AAB2-97100707F7DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF8BF22B-2B76-44B9-AAB2-97100707F7DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
