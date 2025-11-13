@@ -9,11 +9,24 @@ namespace FCG_Libraries.Api.Controllers
     [Route("[controller]")]
     public class LibraryController(ILibraryService service) : ControllerBase
     {
+        /// <summary>
+        /// Busca todos os itens de todas as bibliotecas
+        /// </summary>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("all")]
         public async Task<IResult> GetAllLibrariesAsync(CancellationToken cancellationToken = default)
             => TypedResults.Ok((await service.GetAllLibrariesAsync(cancellationToken)).Value);
 
 
+        /// <summary>
+        /// Busca os itens em todas as bibliotecas que contenham um jogo específico.
+        /// </summary>
+        /// <param name="gameId">Id do jogo a ser pesquisado.</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("game/{gameId}")]
         public async Task<IResult> GetLibrariesByGameIdAsync(Guid gameId, CancellationToken cancellationToken = default)
         {
@@ -34,6 +47,14 @@ namespace FCG_Libraries.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Busca os itens na biblioteca de um usuário específico.
+        /// </summary>
+        /// <param name="userId">Id do usuário</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("user/{userId}")]
         public async Task<IResult> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
@@ -51,6 +72,14 @@ namespace FCG_Libraries.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Busca um item de biblioteca específico pelo seu Id.
+        /// </summary>
+        /// <param name="id">Id do item da biblioteca</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{id}")]
         public async Task<IResult> GetLibraryByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -69,6 +98,14 @@ namespace FCG_Libraries.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cria um novo item na biblioteca.
+        /// </summary>
+        /// <param name="request">Informações necessárias para cadastrar um item na biblioteca</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<IResult> CreateLibraryAsync([FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
         {
@@ -86,6 +123,15 @@ namespace FCG_Libraries.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualiza um item na biblioteca.
+        /// </summary>
+        /// <param name="request">Novos dados para atualização</param>
+        /// <param name="id">Id do item da biblioteca que será atualizado</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
         public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
         {
@@ -103,6 +149,14 @@ namespace FCG_Libraries.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove um item da biblioteca.
+        /// </summary>        
+        /// <param name="id">Id do item que será removido</param>
+        /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<IResult> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -111,7 +165,7 @@ namespace FCG_Libraries.Api.Controllers
                 var result = await service.DeleteLibraryAsync(id, cancellationToken);
                 IResult response = result.IsFailure
                     ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.Ok();
+                    : TypedResults.NoContent();
                 return response;
             }
             catch (Exception ex)
