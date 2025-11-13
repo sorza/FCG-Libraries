@@ -57,5 +57,29 @@ namespace FCG_Libraries.Domain.Libraries.Entities
 
         #endregion
 
+        #region Methods
+
+        public void Update(Guid userId, Guid gameId, EStatus status, decimal? pricePaid)
+        {
+            if (userId == Guid.Empty)
+                throw new InvalidUserException(ErrorMessage.Library.UserRequired);
+            //Consulta se o userId existe na base de dados de Users, se não existir, lança exceção
+            //TO DO: Implementar essa verificação quando o módulo de Users estiver disponível
+            if (gameId == Guid.Empty)
+                throw new InvalidGameException(ErrorMessage.Library.GameRequired);
+            //Consulta se o gameId existe na base de dados de Games, se não existir, lança exceção
+            //TO DO: Implementar essa verificação quando o módulo de Games estiver disponível
+            if (!Enum.IsDefined(typeof(EStatus), status))
+                throw new InvalidStatusException(ErrorMessage.Library.InvalidStatus);
+            if (pricePaid < 0)
+                throw new InvalidPriceException(ErrorMessage.Library.PricePaidNegative);
+            UserId = userId;
+            GameId = gameId;
+            Status = status;
+            PricePaid = pricePaid;
+            UpdateLastDateChanged();
+        }
+
+        #endregion
     }
 }
