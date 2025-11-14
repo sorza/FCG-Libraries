@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,9 +7,10 @@
     <RootNamespace>FCG_Libraries.Api</RootNamespace>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>$(NoWarn);1591</NoWarn>
+    <UserSecretsId>3f3c90dd-4928-41b6-8079-ebcddedc527d</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup>	
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

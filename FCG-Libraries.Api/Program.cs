@@ -12,12 +12,8 @@ namespace FCG_Libraries.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddInfrastructureServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
-
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<LibraryDbContext>(options =>
-                options.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
             

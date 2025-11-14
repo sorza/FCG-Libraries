@@ -7,7 +7,9 @@ using FluentValidation;
 
 namespace FCG_Libraries.Application.Libraries.Services
 {
-    public class LibraryService(ILibraryRepository repository, IValidator<LibraryRequest> validator) : ILibraryService
+    public class LibraryService(ILibraryRepository repository,
+                                IValidator<LibraryRequest> validator,
+                                IEventPublisher publisher) : ILibraryService
     {
         public async Task<Result<LibraryResponse>> CreateLibraryAsync(LibraryRequest request, CancellationToken cancellationToken = default)
         {
@@ -22,7 +24,21 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             var library = Library.Create(request.UserId, request.GameId, request.Status, request.PricePaid);
 
+            if(library.Status == Domain.Libraries.Enums.EStatus.Owned)
+            {
+                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, library.Status, library.PricePaid);
+                await publisher.PublishAsync(evt_order, "OrderCreated");
+
+                //TODO: Aguarda o resultado do pagamento
+            }           
+
             await repository.AddAsync(library, cancellationToken);
+
+            if(library.Status == Domain.Libraries.Enums.EStatus.Owned)
+            {
+                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, library.Status, library.PricePaid);
+                await publisher.PublishAsync(evt_itemCreated, "LibraryItemCreated");
+            }
 
             return Result.Success(new LibraryResponse(
                 ItemId: library.Id,
