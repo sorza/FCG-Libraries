@@ -4,12 +4,14 @@ using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Application.Shared.Results;
 using FCG_Libraries.Domain.Libraries.Entities;
 using FluentValidation;
+using System.Net.Http;
 
 namespace FCG_Libraries.Application.Libraries.Services
 {
     public class LibraryService(ILibraryRepository repository,
                                 IValidator<LibraryRequest> validator,
-                                IEventPublisher publisher) : ILibraryService
+                                IEventPublisher publisher,
+                                IHttpClientFactory httpClient) : ILibraryService
     {
         public async Task<Result<LibraryResponse>> CreateLibraryAsync(LibraryRequest request, CancellationToken cancellationToken = default)
         {
@@ -21,6 +23,18 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             if(existe)            
                 return Result.Failure<LibraryResponse>(new Error("409", "Este item já existe na biblioteca do usuário."));
+
+            var gamesClient = httpClient.CreateClient("GamesApi");
+            var gameResponse = await gamesClient.GetAsync($"games/{request.GameId}", cancellationToken);
+
+            if (!gameResponse.IsSuccessStatusCode)
+                return Result.Failure<LibraryResponse>(new Error("404", "Jogo não cadastrado."));
+
+            var userClient = httpClient.CreateClient("UsersApi");
+            var userResponse = await userClient.GetAsync($"users/{request.UserId}", cancellationToken);
+
+            if (!userResponse.IsSuccessStatusCode)
+                return Result.Failure<LibraryResponse>(new Error("404", "Usuário não cadastrado."));
 
             var library = Library.Create(request.UserId, request.GameId, request.Status, request.PricePaid);
 

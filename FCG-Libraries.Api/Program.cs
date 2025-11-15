@@ -1,6 +1,8 @@
 using FCG_Libraries.Application.Shared;
 using FCG_Libraries.Infrastructure.Shared;
 using FCG_Libraries.Infrastructure.Shared.Context;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -15,8 +17,18 @@ namespace FCG_Libraries.Api
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
 
+            builder.Services.AddHttpClient("GamesApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["Services:GamesApi"]!);
+            });
+
+            builder.Services.AddHttpClient("UsersApi", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["Services:UsersApi"]!);
+            });
+
             builder.Services.AddControllers();
-            
+                        
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -26,6 +38,38 @@ namespace FCG_Libraries.Api
             });
 
             var app = builder.Build();
+
+            // Handler de erros globais
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                    var ex = exceptionHandlerPathFeature?.Error;
+
+                    context.Response.ContentType = "application/problem+json";
+                    
+                    var statusCode = ex switch
+                    {
+                        NotImplementedException => StatusCodes.Status501NotImplemented,
+                        TimeoutException => StatusCodes.Status504GatewayTimeout,
+                        InvalidOperationException => StatusCodes.Status502BadGateway,
+                        _ => StatusCodes.Status500InternalServerError
+                    };
+
+                    context.Response.StatusCode = statusCode;
+
+                    var problem = new ProblemDetails
+                    {
+                        Status = statusCode,
+                        Title = "Erro interno",
+                        Detail = "Ocorreu um erro inesperado. Tente novamente mais tarde."
+                    };
+
+                    await context.Response.WriteAsJsonAsync(problem);
+                });
+            });
+
 
             // Aplica migrations
             using (var scope = app.Services.CreateScope())

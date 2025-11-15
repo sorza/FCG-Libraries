@@ -30,21 +30,18 @@ namespace FCG_Libraries.Api.Controllers
         [HttpGet("game/{gameId}")]
         public async Task<IResult> GetLibrariesByGameIdAsync(Guid gameId, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var result = await service.GetLibrariesByGameIdAsync(gameId, cancellationToken);
+            var result = await service.GetLibrariesByGameIdAsync(gameId, cancellationToken);
 
-                IResult response = result.IsFailure
-                    ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.Ok(result.Value);
-
-                return response;
-            }
-            catch (Exception ex)
+            if (result.IsFailure)
             {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
             }
 
+            return TypedResults.Ok(result.Value);
         }
 
         /// <summary>
@@ -58,18 +55,17 @@ namespace FCG_Libraries.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IResult> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            try
-            {
                 var result = await service.GetLibrariesByUserIdAsync(userId, cancellationToken);
-                IResult response = result.IsFailure
-                    ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.Ok(result.Value);
-                return response;
-            }
-            catch (Exception ex)
+            if (result.IsFailure)
             {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
             }
+
+            return TypedResults.Ok(result.Value);
         }
 
         /// <summary>
@@ -82,20 +78,19 @@ namespace FCG_Libraries.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{id}")]
         public async Task<IResult> GetLibraryByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var result = await service.GetLibraryByIdAsync(id, cancellationToken);
+        {            
+            var result = await service.GetLibraryByIdAsync(id, cancellationToken);
 
-                IResult response = result.IsFailure
-                    ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.Ok(result.Value);
-                return response;
-            }
-            catch (Exception ex)
+            if (result.IsFailure)
             {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),                   
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
             }
+
+            return TypedResults.Ok(result.Value);
         }
 
         /// <summary>
@@ -105,22 +100,24 @@ namespace FCG_Libraries.Api.Controllers
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<IResult> CreateLibraryAsync([FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
         {
-            try
+            var result = await service.CreateLibraryAsync(request, cancellationToken);
+            if (result.IsFailure)
             {
-                var result = await service.CreateLibraryAsync(request, cancellationToken);
-                IResult response = result.IsFailure
-                    ? TypedResults.Conflict(new Error("409", result.Error.Message))
-                    : TypedResults.Ok(result.Value);
-                return response;
-            }
-            catch (Exception ex)
-            {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
-            }
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),
+                    "409" => TypedResults.Conflict(new Error("409", result.Error.Message)),
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
+            }             
+            
+            return TypedResults.Created($"/Library/{result.Value}", result.Value);
+          
         }
 
         /// <summary>
@@ -135,18 +132,18 @@ namespace FCG_Libraries.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
         {
-            try
+           
+            var result = await service.UpdateLibraryAsync(id, request, cancellationToken);
+            if (result.IsFailure)
             {
-                var result = await service.UpdateLibraryAsync(id, request, cancellationToken);
-                IResult response = result.IsFailure
-                    ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.Ok(result.Value);
-                return response;
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),
+                    "409" => TypedResults.Conflict(new Error("409", result.Error.Message)),
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
             }
-            catch (Exception ex)
-            {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
-            }
+            return TypedResults.Created($"/Library/{result.Value}", result.Value);
         }
 
         /// <summary>
@@ -160,18 +157,20 @@ namespace FCG_Libraries.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IResult> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            try
+            
+            var result = await service.DeleteLibraryAsync(id, cancellationToken);
+
+            if (result.IsFailure)
             {
-                var result = await service.DeleteLibraryAsync(id, cancellationToken);
-                IResult response = result.IsFailure
-                    ? TypedResults.NotFound(new Error("404", result.Error.Message))
-                    : TypedResults.NoContent();
-                return response;
+                return result.Error.Code switch
+                {
+                    "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),                    
+                    _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
+                };
             }
-            catch (Exception ex)
-            {
-                return TypedResults.BadRequest(new Error("400", ex.Message));
-            }
+
+            return TypedResults.NoContent();
+
         }
     }
 }

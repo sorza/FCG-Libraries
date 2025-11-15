@@ -15,6 +15,7 @@ namespace FCG_Libraries.Infrastructure.Shared
         {
             services.AddDbContext<LibraryDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+          
 
             var connectionString = configuration["ServiceBus:ConnectionString"];
             var queueName = configuration["ServiceBus:Queues:LibrariesEvents"];
