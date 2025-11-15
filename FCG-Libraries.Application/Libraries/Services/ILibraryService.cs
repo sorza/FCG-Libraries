@@ -11,7 +11,7 @@ namespace FCG_Libraries.Application.Libraries.Services
         Task<Result<IEnumerable<LibraryResponse>>> GetAllLibrariesAsync(CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByGameIdAsync(Guid gameId, CancellationToken cancellationToken = default);
-        Task<Result<LibraryResponse>> UpdateLibraryAsync(Guid id, LibraryRequest request,  CancellationToken cancellationToken = default);
+        Task<Result<LibraryResponse>> UpdateLibraryAsync(Guid id, LibraryRequest request,  CancellationToken cancellationToken = default);        
         Task<Result> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

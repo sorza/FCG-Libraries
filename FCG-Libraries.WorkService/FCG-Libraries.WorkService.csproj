@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-FCG_Libraries.WorkService-e1e4a03f-bd65-4434-9783-5cd76d81aaab</UserSecretsId>
+    <RootNamespace>FCG_Libraries.WorkService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+    <PackageReference Include="FCG.Shared.Contracts" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FCG-Libraries.Application\FCG-Libraries.Application.csproj" />
+    <ProjectReference Include="..\FCG-Libraries.Infrastructure\FCG-Libraries.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

@@ -118,7 +118,7 @@ namespace FCG_Libraries.Application.Libraries.Services
                 PricePaid: result.PricePaid);
 
             return Result.Success(libraryResponse);
-        }
+        }       
 
         public async Task<Result<LibraryResponse>> UpdateLibraryAsync(Guid id, LibraryRequest request, CancellationToken cancellationToken = default)
         {

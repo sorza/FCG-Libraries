@@ -33,5 +33,12 @@ namespace FCG_Libraries.Infrastructure.Shared.Repositories
 
         public Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
             => _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        public Task DeleteAsync(Func<T, bool> predicate, CancellationToken cancellationToken = default)
+        {
+            var entities = _dbSet.Where(predicate).ToList();
+            _dbSet.RemoveRange(entities);
+            return context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
