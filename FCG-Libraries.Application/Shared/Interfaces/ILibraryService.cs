@@ -2,7 +2,7 @@
 using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Results;
 
-namespace FCG_Libraries.Application.Libraries.Services
+namespace FCG_Libraries.Application.Shared.Interfaces
 {
     public interface ILibraryService
     {

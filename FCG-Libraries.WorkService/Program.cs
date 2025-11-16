@@ -2,6 +2,7 @@ using Azure.Messaging.ServiceBus;
 using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Infrastructure.Libraries.Repositories;
 using FCG_Libraries.Infrastructure.Shared.Context;
+using FCG_Libraries.WorkService.Consumers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -22,6 +23,7 @@ namespace FCG_Libraries.WorkService
 
                     services.AddScoped<ILibraryRepository, LibraryRepository>();
                     services.AddHostedService<GameEventsConsumer>();
+                    services.AddHostedService<UserEventsConsumer>();
                 });
 
             await builder.RunConsoleAsync();

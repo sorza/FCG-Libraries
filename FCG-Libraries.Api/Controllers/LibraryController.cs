@@ -1,5 +1,5 @@
 ﻿using FCG_Libraries.Application.Libraries.Requests;
-using FCG_Libraries.Application.Libraries.Services;
+using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Application.Shared.Results;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,7 +55,7 @@ namespace FCG_Libraries.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IResult> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-                var result = await service.GetLibrariesByUserIdAsync(userId, cancellationToken);
+            var result = await service.GetLibrariesByUserIdAsync(userId, cancellationToken);
             if (result.IsFailure)
             {
                 return result.Error.Code switch

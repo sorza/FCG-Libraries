@@ -3,7 +3,7 @@ using FCG.Shared.Contracts;
 using FCG_Libraries.Application.Shared.Interfaces;
 using System.Text.Json;
 
-namespace FCG_Libraries.WorkService
+namespace FCG_Libraries.WorkService.Consumers
 {
     public class GameEventsConsumer : BackgroundService
     {
@@ -32,11 +32,11 @@ namespace FCG_Libraries.WorkService
                     {
                         using var scope = _scopeFactory.CreateScope();
                         var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
-
-                        Console.WriteLine($"Removendo jogos da biblioteca do jogo {evt.Id}");
+                        
                         await repo.DeleteAsync(library => library.GameId == evt.Id, stoppingToken);
+                        Console.WriteLine($"O jogo {evt.Id} foi removido das bibliotecas");
                     }
-                }
+                }               
 
                 await args.CompleteMessageAsync(args.Message);
             };

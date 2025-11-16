@@ -1,10 +1,10 @@
-﻿using FCG_Libraries.Application.Libraries.Requests;
+﻿using FCG.Shared.Contracts;
+using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Application.Shared.Results;
 using FCG_Libraries.Domain.Libraries.Entities;
 using FluentValidation;
-using System.Net.Http;
 
 namespace FCG_Libraries.Application.Libraries.Services
 {
@@ -40,7 +40,7 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             if(library.Status == Domain.Libraries.Enums.EStatus.Owned)
             {
-                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, library.Status, library.PricePaid);
+                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, library.Status.ToString(), library.PricePaid);
                 await publisher.PublishAsync(evt_order, "OrderCreated");
 
                 //TODO: Aguarda o resultado do pagamento
@@ -50,7 +50,7 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             if(library.Status == Domain.Libraries.Enums.EStatus.Owned)
             {
-                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, library.Status, library.PricePaid);
+                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, library.Status.ToString(), library.PricePaid);
                 await publisher.PublishAsync(evt_itemCreated, "LibraryItemCreated");
             }
 

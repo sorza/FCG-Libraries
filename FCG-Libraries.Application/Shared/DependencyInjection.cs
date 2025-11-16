@@ -1,6 +1,7 @@
 ﻿using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Libraries.Services;
 using FCG_Libraries.Application.Libraries.Validators;
+using FCG_Libraries.Application.Shared.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
