@@ -36,7 +36,7 @@ namespace FCG_Libraries.WorkService.Consumers
                         await repo.DeleteAsync(library => library.GameId == evt.Id, stoppingToken);
                         Console.WriteLine($"O jogo {evt.Id} foi removido das bibliotecas");
                     }
-                }               
+                } 
 
                 await args.CompleteMessageAsync(args.Message);
             };

@@ -42,15 +42,14 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             if(library.PaymentType == EPaymentType.Free)
             {
-                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, EStatus.Owned.ToString(), 0, EPaymentType.Free.ToString());
-                await publisher.PublishAsync(evt_itemCreated, "LibraryItemCreated");
-               
+                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, EOrderStatus.Owned, 0, EPaymentType.Free);
+                await publisher.PublishAsync(evt_itemCreated, "LibraryItemCreated");               
+                library.UpdateStatus(EStatus.Owned);
             }
             else
             {
-                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, EStatus.Requested.ToString(), 0, request.PaymentType.ToString());
+                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, EOrderStatus.Requested, library.PricePaid, request.PaymentType);
                 await publisher.PublishAsync(evt_order, "OrderCreated");
-
             }
 
             await repository.AddAsync(library, cancellationToken);

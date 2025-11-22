@@ -1,4 +1,5 @@
-﻿using FCG_Libraries.Domain.Libraries.Enums;
+﻿using FCG.Shared.Contracts.Enums;
+using FCG_Libraries.Domain.Libraries.Enums;
 using FCG_Libraries.Domain.Libraries.Exceptions;
 using FCG_Libraries.Domain.Libraries.Exceptions.Library;
 using FCG_Libraries.Domain.Shared;
@@ -37,7 +38,7 @@ namespace FCG_Libraries.Domain.Libraries.Entities
         public static Library Create(Guid userId, Guid gameId, decimal? pricePaid, EPaymentType paymentType)
         {
             if (userId == Guid.Empty)
-                throw new InvalidUserException(ErrorMessage.Library.UserRequired);            
+                throw new InvalidUserException(ErrorMessage.Library.UserRequired);
 
             if (gameId == Guid.Empty)
                 throw new InvalidGameException(ErrorMessage.Library.GameRequired);           

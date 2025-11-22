@@ -2,7 +2,8 @@
 {
     public enum EStatus
     {
+        Requested = 0,
         Owned = 1,
-        Requested = 2
+        Failed = 2
     }
 }
