@@ -1,4 +1,5 @@
 ﻿using FCG.Shared.Contracts;
+using FCG.Shared.Contracts.Enums;
 using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Interfaces;
@@ -50,14 +51,6 @@ namespace FCG_Libraries.Application.Libraries.Services
                 var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, EStatus.Requested.ToString(), 0, request.PaymentType.ToString());
                 await publisher.PublishAsync(evt_order, "OrderCreated");
 
-                //Aguarda a confirmação do pagamento antes de adicionar o item à biblioteca
-
-                // Se sucesso
-                //library.UpdateStatus(EStatus.Owned);
-
-                // Se falha
-                //library.UpdateStatus(EStatus.Failed);
-                //return Result.Failure<LibraryResponse>(new Error("402", "Pagamento não autorizado."));
             }
 
             await repository.AddAsync(library, cancellationToken);

@@ -1,4 +1,5 @@
-﻿using FCG_Libraries.Domain.Libraries.Enums;
+﻿using FCG.Shared.Contracts.Enums;
+using FCG_Libraries.Domain.Libraries.Enums;
 
 namespace FCG_Libraries.Application.Libraries.Responses
 {
