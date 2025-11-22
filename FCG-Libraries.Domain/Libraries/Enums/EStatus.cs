@@ -3,6 +3,6 @@
     public enum EStatus
     {
         Owned = 1,
-        Wishlisted = 2
+        Requested = 2
     }
 }

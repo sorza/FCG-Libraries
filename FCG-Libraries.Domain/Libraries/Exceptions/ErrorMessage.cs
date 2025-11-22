@@ -13,5 +13,6 @@
         public string InvalidGame { get; } = "O jogo informado é inválido";
         public string InvalidStatus { get; } = "O status informado é inválido";
         public string PricePaidNegative { get; } = "O valor pago não pode ser negativo";
+        public string InvalidPaymentType { get; } = "O tipo de pagamento informado é inválido";
     }
 }

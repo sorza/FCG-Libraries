@@ -1,6 +1,7 @@
 ﻿using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Application.Shared.Results;
+using FCG_Libraries.Domain.Libraries.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FCG_Libraries.Api.Controllers
@@ -100,6 +101,7 @@ namespace FCG_Libraries.Api.Controllers
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
@@ -111,6 +113,7 @@ namespace FCG_Libraries.Api.Controllers
                 return result.Error.Code switch
                 {
                     "404" => TypedResults.NotFound(new Error("404", result.Error.Message)),
+                    "402" => TypedResults.StatusCode(StatusCodes.Status402PaymentRequired),
                     "409" => TypedResults.Conflict(new Error("409", result.Error.Message)),
                     _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
                 };
@@ -121,19 +124,19 @@ namespace FCG_Libraries.Api.Controllers
         }
 
         /// <summary>
-        /// Atualiza um item na biblioteca.
+        /// Atualiza o status de um item na biblioteca.
         /// </summary>
-        /// <param name="request">Novos dados para atualização</param>
+        /// <param name="status">Novo Status</param>
         /// <param name="id">Id do item da biblioteca que será atualizado</param>
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
-        public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
+        public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] EStatus status, CancellationToken cancellationToken = default)
         {
            
-            var result = await service.UpdateLibraryAsync(id, request, cancellationToken);
+            var result = await service.UpdateStatusAsync(id, status, cancellationToken);
             if (result.IsFailure)
             {
                 return result.Error.Code switch

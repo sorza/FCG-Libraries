@@ -2,6 +2,6 @@
 
 namespace FCG_Libraries.Application.Libraries.Requests
 {
-    public sealed record LibraryRequest(Guid UserId, Guid GameId, EStatus Status, decimal? PricePaid);
+    public sealed record LibraryRequest(Guid UserId, Guid GameId, decimal? PricePaid, EPaymentType PaymentType);
 
 }

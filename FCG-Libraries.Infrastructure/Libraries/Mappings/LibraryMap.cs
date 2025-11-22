@@ -27,7 +27,12 @@ namespace FCG_Libraries.Infrastructure.Libraries.Mappings
 
             builder.Property(x=> x.PricePaid)
                 .HasColumnName("PricePaid")
+                .HasPrecision(12, 2)
                 .IsRequired(false);
+
+            builder.Property(x => x.PaymentType)
+                .HasColumnName("PaymentType")
+                .IsRequired(true);
 
         }
     }

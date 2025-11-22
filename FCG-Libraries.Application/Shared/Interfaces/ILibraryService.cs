@@ -1,6 +1,7 @@
 ﻿using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Results;
+using FCG_Libraries.Domain.Libraries.Enums;
 
 namespace FCG_Libraries.Application.Shared.Interfaces
 {
@@ -11,7 +12,7 @@ namespace FCG_Libraries.Application.Shared.Interfaces
         Task<Result<IEnumerable<LibraryResponse>>> GetAllLibrariesAsync(CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByGameIdAsync(Guid gameId, CancellationToken cancellationToken = default);
-        Task<Result<LibraryResponse>> UpdateLibraryAsync(Guid id, LibraryRequest request,  CancellationToken cancellationToken = default);        
+        Task<Result<LibraryResponse>> UpdateStatusAsync(Guid id, EStatus status, CancellationToken cancellationToken = default);        
         Task<Result> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }
