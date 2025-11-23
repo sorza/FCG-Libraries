@@ -71,7 +71,6 @@ namespace FCG_Libraries.Api
                 });
             });
 
-
             // Aplica migrations
             using (var scope = app.Services.CreateScope())
             {
