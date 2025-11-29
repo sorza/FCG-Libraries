@@ -1,0 +1,43 @@
+trigger:
+- main
+
+pool:
+  name: 'LocalPool'
+
+variables:
+  acrName: 'fcgregistries.azurecr.io'
+  dockerRegistryServiceConnection: '576941a1-c337-49cf-af7a-81750fcd6af9'
+  tag: '$(Build.BuildId)'
+  buildContext: '$(Build.SourcesDirectory)'
+
+stages:
+- stage: BuildAndPush
+  displayName: Build and Push Images
+  jobs:
+  - job: BuildApi
+    displayName: Build Libraries API
+    steps:
+    - task: Docker@2
+      displayName: Build and Push API Image
+      inputs:
+        command: buildAndPush
+        repository: 'fcg-libraries-api'
+        dockerfile: '$(Build.SourcesDirectory)/FCG-Libraries.Api/Dockerfile'
+        containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: $(buildContext)
+        tags: |
+          $(tag)
+
+  - job: BuildWorker
+    displayName: Build Libraries Worker
+    steps:
+    - task: Docker@2
+      displayName: Build and Push Worker Image
+      inputs:
+        command: buildAndPush
+        repository: 'fcg-libraries-worker'
+        dockerfile: '$(Build.SourcesDirectory)/FCG-Libraries.WorkService/Dockerfile'
+        containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: $(buildContext)
+        tags: |
+          $(tag)
