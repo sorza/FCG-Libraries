@@ -38,6 +38,11 @@ namespace FCG_Libraries.Api
                 c.IncludeXmlComments(xmlPath);
             });
 
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(80); 
+            });
+            
             var app = builder.Build();
 
             // Handler de erros globais

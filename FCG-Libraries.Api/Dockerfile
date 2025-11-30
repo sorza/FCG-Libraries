@@ -17,3 +17,5 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 ENTRYPOINT ["dotnet", "FCG-Libraries.Api.dll"]
+
+EXPOSE 80
