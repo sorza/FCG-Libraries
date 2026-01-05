@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using FCG.Shared.Contracts.Enums;
 using FCG.Shared.Contracts.Events.Domain.Payments;
 using FCG.Shared.Contracts.Events.Domain.Users;
 using FCG_Libraries.Application.Shared.Interfaces;
@@ -61,7 +62,16 @@ namespace FCG_Libraries.Consumer.Consumers
 
             if (evt is not null)
             {
+                using var scope = _scopeFactory.CreateScope();
+                var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
 
+                var item = await repo.GetByIdAsync(Guid.Parse(evt.OrderId.ToString()));
+
+                if (item is not null)
+                {
+                    item.UpdateStatus(EOrderStatus.Failed);
+                    await repo.UpdateAsync(item);
+                }
             }
         }
 
@@ -71,7 +81,16 @@ namespace FCG_Libraries.Consumer.Consumers
 
             if (evt is not null)
             {
-               
+                using var scope = _scopeFactory.CreateScope();
+                var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
+
+                var item = await repo.GetByIdAsync(Guid.Parse(evt.OrderId.ToString()));
+
+                if (item is not null)
+                {
+                    item.UpdateStatus(EOrderStatus.Owned);
+                    await repo.UpdateAsync(item);
+                }
             }
 
         }
