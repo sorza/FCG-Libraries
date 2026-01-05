@@ -22,6 +22,8 @@ namespace FCG_Libraries.Consumer
 
                     services.AddScoped<ILibraryRepository, LibraryRepository>();
                     services.AddHostedService<LibrariesTopicConsumer>();
+                    services.AddHostedService<UsersTopicConsumer>();
+                    services.AddHostedService<GamesTopicConsumer>();
                 });
 
             await builder.RunConsoleAsync();

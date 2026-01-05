@@ -80,9 +80,8 @@ namespace FCG_Libraries.Consumer.Consumers
             var item = Library.Create(evt!.UserId, evt.GameId, evt.PricePaid);
 
 
-            if (!await repo.ExistsAsync(new LibraryRequest(item.UserId, item.GameId, evt.Status, item.PricePaid)))            
-                await repo.AddAsync(item);
-            
+            if (!await repo.ExistsAsync(new LibraryRequest(item.UserId, item.GameId, item.PricePaid)))            
+                await repo.AddAsync(item);           
                 
         }
 
