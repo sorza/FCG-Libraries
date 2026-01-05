@@ -1,7 +1,6 @@
 ﻿using FCG.Shared.Contracts.Enums;
-using FCG_Libraries.Domain.Libraries.Enums;
 
 namespace FCG_Libraries.Application.Libraries.Responses
 {
-    public sealed record LibraryResponse(Guid ItemId, Guid UserId, Guid GameId, EStatus Status, decimal? PricePaid, EPaymentType PaymentType);
+    public sealed record LibraryResponse(Guid ItemId, Guid UserId, Guid GameId, EOrderStatus Status, decimal? PricePaid);
 }

@@ -2,7 +2,7 @@ using Azure.Messaging.ServiceBus;
 using FCG.Shared.Contracts;
 using FCG_Libraries.Application.Shared.Interfaces;
 using System.Text.Json;
-
+/*
 namespace FCG_Libraries.WorkService.Consumers
 {
     public class UserEventsConsumer : BackgroundService
@@ -58,3 +58,4 @@ namespace FCG_Libraries.WorkService.Consumers
 
     }
 }
+*/

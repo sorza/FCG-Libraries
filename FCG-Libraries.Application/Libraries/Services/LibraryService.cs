@@ -1,11 +1,11 @@
-﻿using FCG.Shared.Contracts;
-using FCG.Shared.Contracts.Enums;
+﻿using FCG.Shared.Contracts.Enums;
+using FCG.Shared.Contracts.Events.Domain.Libraries;
+using FCG.Shared.Contracts.Interfaces;
+using FCG.Shared.Contracts.Results;
 using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Interfaces;
-using FCG_Libraries.Application.Shared.Results;
 using FCG_Libraries.Domain.Libraries.Entities;
-using FCG_Libraries.Domain.Libraries.Enums;
 using FluentValidation;
 
 namespace FCG_Libraries.Application.Libraries.Services
@@ -13,9 +13,10 @@ namespace FCG_Libraries.Application.Libraries.Services
     public class LibraryService(ILibraryRepository repository,
                                 IValidator<LibraryRequest> validator,
                                 IEventPublisher publisher,
+                                IEventStore eventStore,
                                 IHttpClientFactory httpClient) : ILibraryService
     {
-        public async Task<Result<LibraryResponse>> CreateLibraryAsync(LibraryRequest request, CancellationToken cancellationToken = default)
+        public async Task<Result<LibraryResponse>> CreateLibraryItemAsync(LibraryRequest request, string correlationId, CancellationToken cancellationToken = default)
         {
             var validation = validator.Validate(request);
             if (!validation.IsValid)
@@ -38,39 +39,38 @@ namespace FCG_Libraries.Application.Libraries.Services
             if (!userResponse.IsSuccessStatusCode)
                 return Result.Failure<LibraryResponse>(new Error("404", "Usuário não cadastrado."));
 
-            var library = Library.Create(request.UserId, request.GameId, request.PricePaid, request.PaymentType);
+            var library = Library.Create(request.UserId, request.GameId, request.PricePaid);
+                        
+            var evt = new LibraryItemCreatedEvent(library.Id.ToString(), library.UserId, library.GameId, EOrderStatus.Requested, library.PricePaid);
 
-            if(library.PaymentType == EPaymentType.Free)
-            {
-                var evt_itemCreated = new LibraryItemCreatedEvent(library.Id, library.UserId, library.GameId, EOrderStatus.Owned, 0, EPaymentType.Free);
-                await publisher.PublishAsync(evt_itemCreated, "LibraryItemCreated");               
-                library.UpdateStatus(EStatus.Owned);
-            }
-            else
-            {
-                var evt_order = new LibraryOrderEvent(library.Id, library.UserId, library.GameId, EOrderStatus.Requested, library.PricePaid, request.PaymentType);
-                await publisher.PublishAsync(evt_order, "OrderCreated");
-            }
+            await eventStore.AppendAsync(evt.AggregateId, evt, 0, correlationId);
 
-            await repository.AddAsync(library, cancellationToken);
+            await publisher.PublishAsync(evt, "LibraryItemCreated", correlationId);  
 
             return Result.Success(new LibraryResponse(
                 ItemId: library.Id,
                 UserId: library.UserId,
                 GameId: library.GameId,
                 Status: library.Status,
-                PricePaid: library.PricePaid,
-                PaymentType: library.PaymentType));
+                PricePaid: library.PricePaid));
         }
 
-        public async Task<Result> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Result> DeleteLibraryItemAsync(Guid id, string correlationId, CancellationToken cancellationToken = default)
         {
             var result = await repository.GetByIdAsync(id, cancellationToken);
             if (result is null)
                 return Result.Failure(new Error("404", "Item da biblioteca não encontrado."));
 
-            await repository.DeleteAsync(id, cancellationToken);
-            return Result.Success(new LibraryResponse(result.Id, result.UserId, result.GameId, result.Status, result.PricePaid, result.PaymentType));
+            var events = await eventStore.GetEventsAsync(id.ToString());
+            var currentVersion = events.Count;
+
+            var evt = new LibraryItemDeletedEvent(id.ToString(), result.UserId, result.GameId);
+
+            await eventStore.AppendAsync(id.ToString(), evt, currentVersion, correlationId);
+
+            await publisher.PublishAsync(evt, "LibraryItemDeleted", correlationId);
+
+            return Result.Success(new LibraryResponse(result.Id, result.UserId, result.GameId, result.Status, result.PricePaid));
         }
 
         public async Task<Result<IEnumerable<LibraryResponse>>> GetAllLibrariesAsync(CancellationToken cancellationToken = default)
@@ -82,8 +82,7 @@ namespace FCG_Libraries.Application.Libraries.Services
                 UserId: library.UserId,
                 GameId: library.GameId,
                 Status: library.Status,
-                PricePaid: library.PricePaid,
-                PaymentType: library.PaymentType));
+                PricePaid: library.PricePaid));
 
             return Result.Success(libraries);
         }
@@ -99,8 +98,7 @@ namespace FCG_Libraries.Application.Libraries.Services
                     UserId: library.UserId,
                     GameId: library.GameId,
                     Status: library.Status,
-                    PricePaid: library.PricePaid,
-                    PaymentType: library.PaymentType));
+                    PricePaid: library.PricePaid));
 
             return Result.Success(libraries);
         }
@@ -116,8 +114,7 @@ namespace FCG_Libraries.Application.Libraries.Services
                     UserId: library.UserId,
                     GameId: library.GameId,
                     Status: library.Status,
-                    PricePaid: library.PricePaid,
-                    PaymentType: library.PaymentType));
+                    PricePaid: library.PricePaid));
 
             return Result.Success(libraries);
         }
@@ -133,15 +130,14 @@ namespace FCG_Libraries.Application.Libraries.Services
                 UserId: result.UserId,
                 GameId: result.GameId,
                 Status: result.Status,
-                PricePaid: result.PricePaid, 
-                PaymentType: result.PaymentType);
+                PricePaid: result.PricePaid);
 
             return Result.Success(libraryResponse);
         }       
 
-        public async Task<Result<LibraryResponse>> UpdateStatusAsync(Guid id, EStatus status, CancellationToken cancellationToken = default)
+        public async Task<Result<LibraryResponse>> UpdateStatusAsync(Guid id, EOrderStatus status, string correlationId, CancellationToken cancellationToken = default)
         {          
-            if(!Enum.IsDefined(typeof(EStatus), status))            
+            if(!Enum.IsDefined(typeof(EOrderStatus), status))            
                 return Result.Failure<LibraryResponse>(new Error("400", "Status inválido."));
             
             var libraryItem = await repository.GetByIdAsync(id, cancellationToken);
@@ -150,15 +146,21 @@ namespace FCG_Libraries.Application.Libraries.Services
 
             libraryItem.UpdateStatus(status);
 
-            await repository.UpdateAsync(libraryItem, cancellationToken);
+            var events = await eventStore.GetEventsAsync(id.ToString());
+            var currentVersion = events.Count;
+
+            var evt = new LibraryItemUpdatedEvent(id.ToString(), status);
+
+            await eventStore.AppendAsync(id.ToString(), evt, currentVersion, correlationId);
+
+            await publisher.PublishAsync(evt, "LibraryItemUpdated", correlationId);
 
             return Result.Success(new LibraryResponse(
                 ItemId: libraryItem.Id,
                 UserId: libraryItem.UserId,
                 GameId: libraryItem.GameId,
                 Status: libraryItem.Status,
-                PricePaid: libraryItem.PricePaid,
-                PaymentType: libraryItem.PaymentType));
+                PricePaid: libraryItem.PricePaid));
         }
     }
 }

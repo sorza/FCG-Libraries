@@ -1,7 +1,7 @@
-﻿using FCG_Libraries.Application.Libraries.Requests;
+﻿using FCG.Shared.Contracts.Enums;
+using FCG.Shared.Contracts.Results;
+using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Shared.Interfaces;
-using FCG_Libraries.Application.Shared.Results;
-using FCG_Libraries.Domain.Libraries.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FCG_Libraries.Api.Controllers
@@ -95,11 +95,11 @@ namespace FCG_Libraries.Api.Controllers
         }
 
         /// <summary>
-        /// Cria um novo item na biblioteca.
+        /// Solicita a adição de um novo item na biblioteca.
         /// </summary>
         /// <param name="request">Informações necessárias para cadastrar um item na biblioteca</param>
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,7 +107,9 @@ namespace FCG_Libraries.Api.Controllers
         [HttpPost]
         public async Task<IResult> CreateLibraryAsync([FromBody] LibraryRequest request, CancellationToken cancellationToken = default)
         {
-            var result = await service.CreateLibraryAsync(request, cancellationToken);
+            var correlationId = HttpContext.Items["CorrelationId"]?.ToString();
+
+            var result = await service.CreateLibraryItemAsync(request, correlationId!, cancellationToken);
             if (result.IsFailure)
             {
                 return result.Error.Code switch
@@ -119,24 +121,25 @@ namespace FCG_Libraries.Api.Controllers
                 };
             }             
             
-            return TypedResults.Created($"/Library/{result.Value}", result.Value);
+            return TypedResults.Accepted($"/libraries/{result.Value.ItemId}", new { Item = result.Value, CorrelationId = correlationId });
           
         }
 
         /// <summary>
-        /// Atualiza o status de um item na biblioteca.
+        /// Solicita a atualização do status de um item na biblioteca.
         /// </summary>
         /// <param name="status">Novo Status</param>
         /// <param name="id">Id do item da biblioteca que será atualizado</param>
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
-        public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] EStatus status, CancellationToken cancellationToken = default)
+        public async Task<IResult> UpdateLibraryAsync(Guid id, [FromBody] EOrderStatus status, CancellationToken cancellationToken = default)
         {
-           
-            var result = await service.UpdateStatusAsync(id, status, cancellationToken);
+
+            var correlationId = HttpContext.Items["CorrelationId"]!.ToString();
+            var result = await service.UpdateStatusAsync(id, status, correlationId!,cancellationToken);
             if (result.IsFailure)
             {
                 return result.Error.Code switch
@@ -146,22 +149,23 @@ namespace FCG_Libraries.Api.Controllers
                     _ => TypedResults.BadRequest(new Error("400", result.Error.Message))
                 };
             }
-            return TypedResults.Created($"/Library/{result.Value}", result.Value);
+            return TypedResults.Accepted($"/libraries/{result.Value.ItemId}", new { Item = result.Value, CorrelationId = correlationId });
         }
 
         /// <summary>
-        /// Remove um item da biblioteca.
+        /// Solicita a exclusão de um item da biblioteca.
         /// </summary>        
         /// <param name="id">Id do item que será removido</param>
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpDelete("{id}")]
         public async Task<IResult> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            
-            var result = await service.DeleteLibraryAsync(id, cancellationToken);
+            var correlationId = HttpContext.Items["CorrelationId"]!.ToString();
+
+            var result = await service.DeleteLibraryItemAsync(id, correlationId!, cancellationToken);
 
             if (result.IsFailure)
             {
@@ -172,7 +176,7 @@ namespace FCG_Libraries.Api.Controllers
                 };
             }
 
-            return TypedResults.NoContent();
+            return TypedResults.Accepted($"/libraries/status/{correlationId}", new { ItemId = id, CorrelationId = correlationId });
 
         }
     }

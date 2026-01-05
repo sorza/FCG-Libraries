@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Domain", "FCG-Libraries.Domain\FCG-Libraries.Domain.csproj", "{4C3508B4-3B96-4FD8-857D-C96F7EB6D9D2}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Api", "FCG-Libraries.Api\FCG-Libraries.Api.csproj", "{B6BFA1F3-2E2C-40D1-9F88-11E59CE5D38A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.WorkService", "FCG-Libraries.WorkService\FCG-Libraries.WorkService.csproj", "{C375E9DF-EE47-479A-9FC2-7F6A2C374A14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCG-Libraries.Consumer", "FCG-Libraries.Consumer\FCG-Libraries.Consumer.csproj", "{C558FAB8-63D1-4F78-BA19-97C21631DAC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C375E9DF-EE47-479A-9FC2-7F6A2C374A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C375E9DF-EE47-479A-9FC2-7F6A2C374A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C375E9DF-EE47-479A-9FC2-7F6A2C374A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C558FAB8-63D1-4F78-BA19-97C21631DAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C558FAB8-63D1-4F78-BA19-97C21631DAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C558FAB8-63D1-4F78-BA19-97C21631DAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C558FAB8-63D1-4F78-BA19-97C21631DAC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

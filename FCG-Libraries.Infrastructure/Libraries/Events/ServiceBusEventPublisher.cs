@@ -1,5 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
-using FCG_Libraries.Application.Shared.Interfaces;
+using FCG.Shared.Contracts.Interfaces;
 using System.Text.Json;
 
 namespace FCG_Libraries.Infrastructure.Libraries.Events
@@ -15,15 +15,20 @@ namespace FCG_Libraries.Infrastructure.Libraries.Events
             _queueName = queueName;
         }
 
-        public async Task PublishAsync<T>(T evt, string subject)
+        public async Task PublishAsync<T>(T evt, string subject, string correlationId)
         {
             var sender = _client.CreateSender(_queueName);
             var body = JsonSerializer.Serialize(evt);
             var message = new ServiceBusMessage(body)
             {
                 ContentType = "application/json",
-                Subject = subject
+                Subject = subject,
+                CorrelationId = correlationId
             };
+
+            message.ApplicationProperties["EventName"] = subject;
+            message.ApplicationProperties["OccurredAt"] = DateTime.UtcNow.ToString("o");
+
             await sender.SendMessageAsync(message);
         }
     }

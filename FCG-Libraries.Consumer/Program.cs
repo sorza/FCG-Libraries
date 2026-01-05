@@ -1,11 +1,11 @@
 using Azure.Messaging.ServiceBus;
 using FCG_Libraries.Application.Shared.Interfaces;
+using FCG_Libraries.Consumer.Consumers;
 using FCG_Libraries.Infrastructure.Libraries.Repositories;
 using FCG_Libraries.Infrastructure.Shared.Context;
-using FCG_Libraries.WorkService.Consumers;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG_Libraries.WorkService
+namespace FCG_Libraries.Consumer
 {
     public class Program
     {
@@ -21,9 +21,7 @@ namespace FCG_Libraries.WorkService
                     services.AddSingleton(new ServiceBusClient(connectionString));
 
                     services.AddScoped<ILibraryRepository, LibraryRepository>();
-                  /*  services.AddHostedService<GameEventsConsumer>();
-                    services.AddHostedService<UserEventsConsumer>();*/
-                    services.AddHostedService<PaymentEventsConsumer>();
+                    services.AddHostedService<LibrariesTopicConsumer>();
                 });
 
             await builder.RunConsoleAsync();

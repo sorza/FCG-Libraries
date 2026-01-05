@@ -30,10 +30,6 @@ namespace FCG_Libraries.Infrastructure.Libraries.Mappings
                 .HasPrecision(12, 2)
                 .IsRequired(false);
 
-            builder.Property(x => x.PaymentType)
-                .HasColumnName("PaymentType")
-                .IsRequired(true);
-
         }
     }
 }

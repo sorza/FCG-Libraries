@@ -1,8 +1,9 @@
 ﻿
 using Azure.Messaging.ServiceBus;
 using FCG.Shared.Contracts;
+using FCG.Shared.Contracts.Enums;
+using FCG.Shared.Contracts.Events.Domain.Payments;
 using FCG_Libraries.Application.Shared.Interfaces;
-using FCG_Libraries.Domain.Libraries.Enums;
 using System.Text.Json;
 
 namespace FCG_Libraries.WorkService.Consumers
@@ -36,7 +37,7 @@ namespace FCG_Libraries.WorkService.Consumers
                     {
                         var order = await repo.GetByIdAsync(evt.OrderId);
 
-                        order!.UpdateStatus(EStatus.Failed);
+                        order!.UpdateStatus(EOrderStatus.Failed);
 
                         await repo.UpdateAsync(order);
 
@@ -48,7 +49,7 @@ namespace FCG_Libraries.WorkService.Consumers
                         {
                             var order = await repo.GetByIdAsync(evt.OrderId);
 
-                            order!.UpdateStatus(EStatus.Owned);
+                            order!.UpdateStatus(EOrderStatus.Owned);
 
                             await repo.UpdateAsync(order);
 

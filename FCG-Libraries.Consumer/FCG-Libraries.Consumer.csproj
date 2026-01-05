@@ -4,14 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-FCG_Libraries.WorkService-e1e4a03f-bd65-4434-9783-5cd76d81aaab</UserSecretsId>
-    <RootNamespace>FCG_Libraries.WorkService</RootNamespace>
+    <UserSecretsId>dotnet-FCG_Libraries.Consumer-ecd49c2d-1e87-468f-8c71-899d0cecf22c</UserSecretsId>
+    <RootNamespace>FCG_Libraries.Consumer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
 	<PackageReference Include="FCG.Shared.Contracts" Version="1.0.24" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+	<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
   </ItemGroup>
 
   <ItemGroup>

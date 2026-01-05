@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FCG_Libraries.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251122014031_v2")]
-    partial class v2
+    [Migration("20260105030827_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,10 +37,6 @@ namespace FCG_Libraries.Infrastructure.Migrations
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("GameId");
-
-                    b.Property<int>("PaymentType")
-                        .HasColumnType("int")
-                        .HasColumnName("PaymentType");
 
                     b.Property<decimal?>("PricePaid")
                         .HasPrecision(12, 2)

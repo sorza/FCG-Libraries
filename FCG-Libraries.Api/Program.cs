@@ -1,3 +1,4 @@
+using FCG_Libraries.Api.Middlewares;
 using FCG_Libraries.Application.Shared;
 using FCG_Libraries.Infrastructure.Shared;
 using FCG_Libraries.Infrastructure.Shared.Context;
@@ -13,7 +14,7 @@ namespace FCG_Libraries.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.WebHost.UseUrls("http://0.0.0.0:80");
+           // builder.WebHost.UseUrls("http://0.0.0.0:80");
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -46,35 +47,8 @@ namespace FCG_Libraries.Api
             
             var app = builder.Build();
 
-            app.UseExceptionHandler(errorApp =>
-            {
-                errorApp.Run(async context =>
-                {
-                    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-                    var ex = exceptionHandlerPathFeature?.Error;
-
-                    context.Response.ContentType = "application/problem+json";
-                    
-                    var statusCode = ex switch
-                    {
-                        NotImplementedException => StatusCodes.Status501NotImplemented,
-                        TimeoutException => StatusCodes.Status504GatewayTimeout,
-                        InvalidOperationException => StatusCodes.Status502BadGateway,
-                        _ => StatusCodes.Status500InternalServerError
-                    };
-
-                    context.Response.StatusCode = statusCode;
-
-                    var problem = new ProblemDetails
-                    {
-                        Status = statusCode,
-                        Title = "Erro interno",
-                        Detail = "Ocorreu um erro inesperado. Tente novamente mais tarde."
-                    };
-
-                    await context.Response.WriteAsJsonAsync(problem);
-                });
-            });
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+            app.UseMiddleware<CorrelationIdMiddleware>();
 
             using (var scope = app.Services.CreateScope())
             {
