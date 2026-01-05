@@ -1,7 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using FCG.Shared.Contracts.Enums;
 using FCG.Shared.Contracts.Events.Domain.Payments;
-using FCG.Shared.Contracts.Events.Domain.Users;
 using FCG_Libraries.Application.Shared.Interfaces;
 using System.Text.Json;
 
