@@ -19,8 +19,7 @@ namespace FCG_Libraries.Infrastructure.Libraries.Repositories
         => await _context.Libraries
                 .AsNoTracking()
                 .AnyAsync(g => g.UserId == item.UserId &&
-                               g.GameId == item.GameId &&
-                               g.PricePaid == item.PricePaid,                            
+                               g.GameId == item.GameId,                            
                                cancellationToken);
     }
 }

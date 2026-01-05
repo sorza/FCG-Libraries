@@ -7,6 +7,8 @@ using FCG_Libraries.Application.Libraries.Responses;
 using FCG_Libraries.Application.Shared.Interfaces;
 using FCG_Libraries.Domain.Libraries.Entities;
 using FluentValidation;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace FCG_Libraries.Application.Libraries.Services
 {
@@ -39,7 +41,25 @@ namespace FCG_Libraries.Application.Libraries.Services
             if (!userResponse.IsSuccessStatusCode)
                 return Result.Failure<LibraryResponse>(new Error("404", "Usuário não cadastrado."));
 
-            var library = Library.Create(request.UserId, request.GameId, request.PricePaid);
+            var gameJson = await gameResponse.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: cancellationToken);
+
+            decimal? price = null;
+            if (gameJson.ValueKind == JsonValueKind.Object && gameJson.TryGetProperty("price", out var priceProp))
+            {
+                if (priceProp.ValueKind == JsonValueKind.Number)
+                {
+                    if (priceProp.TryGetDecimal(out var p))
+                        price = p;
+                }
+                else if (priceProp.ValueKind == JsonValueKind.String)
+                {
+                    var s = priceProp.GetString();
+                    if (decimal.TryParse(s, out var p))
+                        price = p;
+                }
+            }
+
+            var library = Library.Create(request.UserId, request.GameId, price);
                         
             var evt = new LibraryItemCreatedEvent(library.Id.ToString(), library.UserId, library.GameId, EOrderStatus.Requested, library.PricePaid);
 
