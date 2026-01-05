@@ -53,6 +53,24 @@ Ele foi desenvolvido com foco em **event sourcing**, **mensageria assíncrona** 
 
 ---
 
+## Competências demonstradas
+- Microsserviços  
+- Event Sourcing  
+- CQRS  
+- Event-Driven Architecture (EDA)  
+- Azure Service Bus  
+- MongoDB (Event Store)  
+- Entity Framework Core  
+- .NET 8 / ASP.NET Core  
+- Repository Pattern  
+- Dependency Injection  
+- Middleware personalizado  
+- Idempotência  
+- Docker  
+- Swagger
+
+---
+
 ## Objetivo
 Este projeto foi desenvolvido como parte de um portfólio pessoal para demonstrar:
 - Conhecimento em **arquitetura de microsserviços**.  
