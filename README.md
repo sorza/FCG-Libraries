@@ -3,76 +3,50 @@
 Projeto **FCG-Libraries** faz parte de um ecossistema de microsserviços voltado para gerenciamento de bibliotecas de jogos e usuários.  
 Ele foi desenvolvido com foco em **event sourcing**, **mensageria assíncrona** e **boas práticas de arquitetura distribuída**.
 
----
+## Visão geral
+- Plataforma: `.NET 8` (C#)
+- Estrutura modular com camadas: `Api`, `Application`, `Domain`, `Infrastructure`, `Consumer`
+- Comunicação assíncrona via Azure Service Bus
+- Persistência com Entity Framework Core e SQL Server
+- MongoDB para armazenamento de eventos (Event Store).
+- Consumidores/Workers implementados como `BackgroundService` 
 
-## Tecnologias Utilizadas
-- **.NET 8 / ASP.NET Core** → API
-- **Entity Framework Core** → persistência e abstração de acesso ao banco de dados SQL Server.
-- **MongoDB** → armazenamento de eventos (Event Store).
-- **Azure Service Bus** → mensageria baseada em tópicos e subscriptions.
-- **Swagger / Swashbuckle** → documentação interativa da API.
+## Arquitetura e metodologias
+- Clean Architecture / Onion Architecture
+- Domain-Driven Design (DDD)
+- Event-Driven Architecture
+- Event Sourcing 
+- CQRS 
+- Microsserviços e comunicação assíncrona (tópicos/assinaturas)
+- Projetado para containerização e CI/CD
+- Idempotência
 
----
+## Padrões de projeto
+- Dependency Injection (padrão do .NET)
+- Repository Pattern / Unit of Work (com EF Core)
+- CQRS (quando aplicável)
+- BackgroundService para processamento assíncrono
+- DTOs e mappers entre camadas
 
-## Arquitetura
-- **Microsserviços** → cada contexto (Users, Games, Libraries, Payments) é isolado e independente.
-- **Event-Driven Architecture** → comunicação entre serviços via eventos publicados em tópicos do Service Bus.
-- **Event Sourcing** → todas as mudanças de estado são registradas como eventos imutáveis.
-- **CQRS (Command Query Responsibility Segregation)** → separação clara entre comandos (alteração de estado) e queries (leitura de dados).
-- **Camadas bem definidas**:
-  - **API** → exposição dos endpoints REST.
-  - **Application** → regras de negócio e orquestração de serviços.
-  - **Infrastructure** → persistência, mensageria e integração externa.
-  - **Domain** → entidades e lógica de domínio.
+## Estrutura do repositório
+- `FCG-Libraries.Api` — API REST (Controllers)
+- `FCG-Libraries.Application` — Casos de uso e serviços de aplicação
+- `FCG-Libraries.Domain` — Entidades e interfaces de domínio
+- `FCG-Libraries.Infrastructure` — Implementações (EF Core, Service Bus, DI)
+- `FCG-Libraries.Consumer` — Consumers (ex.: `PaymentsTopicConsumer`, `UsersTopicConsumer`)
 
----
+## Como executar (resumo)
+1. Configurar connection strings / credenciais em `appsettings.Development.json` ou variáveis de ambiente. Para segredos locais, use __User Secrets__ ou serviços de segredo em nuvem.
+2. Restaurar pacotes: `dotnet restore`
+3. Atualizar banco (EF Core migrations): `dotnet ef database update`
+4. Executar API: `dotnet run --project FCG-Libraries.Api`
+5. Executar consumers/worker services conforme configuração (são implementados como `BackgroundService`)
 
-## Padrões e Designs
-- **Repository Pattern** → abstração do acesso a dados.
-- **Dependency Injection** → desacoplamento e facilidade de testes.
-- **Middleware personalizado** → tratamento global de exceções e correlação de requisições.
-- **Event Publisher/Consumer** → implementação de produtores e consumidores de eventos no Azure Service Bus.
-- **Idempotência** → prevenção de duplicidade no processamento de eventos.
+> Observação: adaptar configurações para conexão com Azure Service Bus e SQL Server em ambiente local ou nuvem.
 
----
+## Boas práticas recomendadas
+- Não armazenar segredos no repositório — usar __User Secrets__, Azure Key Vault ou variáveis de ambiente.
+- Instrumentar logs, métricas e tracing para observabilidade.
 
-## Fluxo de Eventos
-1. **Criação/remoção de itens da biblioteca** gera um evento (`LibraryItemCreated`, `LibraryItemRemoved`).  
-2. O evento é persistido no **MongoDB (Event Store)**.  
-3. O evento é publicado no **Azure Service Bus (libraries-topic)**.  
-4. O **Consumer** escuta os tópicos de `Libraries`, `Users` e `Games`:
-   - Se um **User** for removido → todas as bibliotecas vinculadas a ele são apagadas.
-   - Se um **Game** for removido → ele é removido de todas as bibliotecas.
-
----
-
-## Observabilidade
-- **Logs estruturados** com `CorrelationId` para rastrear requisições e eventos.  
-- **Swagger** para documentação e testes de endpoints.  
-- **GlobalExceptionMiddleware** para captura e padronização de erros.
-
----
-
-## Competências demonstradas
-- Microsserviços  
-- Event Sourcing  
-- CQRS  
-- Event-Driven Architecture (EDA)  
-- Azure Service Bus  
-- MongoDB (Event Store)  
-- Entity Framework Core  
-- .NET 8 / ASP.NET Core  
-- Repository Pattern  
-- Dependency Injection  
-- Middleware personalizado  
-- Idempotência  
-- Docker  
-- Swagger
-
----
-
-## Objetivo
-Este projeto foi desenvolvido como parte de um portfólio pessoal para demonstrar:
-- Conhecimento em **arquitetura de microsserviços**.  
-- Aplicação prática de **event sourcing** e **mensageria assíncrona**.  
-- Uso de **padrões de projeto** e boas práticas de engenharia de software.  
+## SEO
+.NET 8, C#, Clean Architecture, Onion Architecture, DDD, CQRS, Azure Service Bus, EF Core 8, Entity Framework, SQL Server, Dependency Injection, BackgroundService, Worker Service, Microservices, Azure, DevOps, GitHub, Portfolio, REST API, Messaging, Asynchronous Processing, Repository Pattern
