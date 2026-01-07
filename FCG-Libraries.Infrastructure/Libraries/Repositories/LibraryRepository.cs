@@ -15,6 +15,14 @@ namespace FCG_Libraries.Infrastructure.Libraries.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        public async Task<IEnumerable<Library>> GetLibrariesAsync(Func<Library, bool> predicate, CancellationToken cancellationToken = default)
+        {
+            return await Task.FromResult(_context.Libraries
+                .AsNoTracking()
+                .Where(predicate)
+                .ToList());
+        }
+
         public async Task<bool> ExistsAsync(LibraryRequest item, CancellationToken cancellationToken = default)
         => await _context.Libraries
                 .AsNoTracking()

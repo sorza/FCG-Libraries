@@ -2,6 +2,7 @@
 using FCG.Shared.Contracts.Enums;
 using FCG.Shared.Contracts.Events.Domain.Payments;
 using FCG_Libraries.Application.Shared.Interfaces;
+using FCG_Libraries.Domain.Libraries.Entities;
 using System.Text.Json;
 
 namespace FCG_Libraries.Consumer.Consumers
@@ -39,12 +40,12 @@ namespace FCG_Libraries.Consumer.Consumers
             _logger.LogInformation("Mensagem recebida: Subject={Subject}, CorrelationId={CorrelationId}", subject, args.Message.CorrelationId);
 
             switch (subject)
-            {
-                case "PaymentAprovedEvent":
-                    await HandlePaymentAprovedEvent(body);
+            {                
+                case "PaymentProcessed":
+                    await HandlePaymentProcessedEvent(body);
                     break;
-                case "PaymentFailedEvent":
-                    await HandlePaymentFailedEvent(body);
+                case "PaymentCreated":
+                     await HandlePaymentCreatedEvent(body,args.Message.CorrelationId);
                     break;
 
                 default:
@@ -55,7 +56,34 @@ namespace FCG_Libraries.Consumer.Consumers
             await args.CompleteMessageAsync(args.Message);
         }
 
-        private async Task HandlePaymentFailedEvent(string body)
+        private async Task HandlePaymentCreatedEvent(string body, string correlationId)
+        {
+            var evt = JsonSerializer.Deserialize<PaymentCreatedEvent>(body);
+
+            if (evt is not null)
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
+
+                var libItens = evt.LibraryItens;
+                List<Library> lista = [];
+
+                foreach (var lib in libItens )
+                {
+                    var item = await repo.GetByIdAsync(lib);
+                    if(item is not null)
+                        lista.Add(item);
+                }
+
+;                foreach (var item in lista)
+                {
+                    item.UpdatePaymentId(Guid.Parse(evt.AggregateId));
+                    await repo.UpdateAsync(item);
+                }
+            }
+        }
+
+        private async Task HandlePaymentProcessedEvent(string body)
         {
             var evt = JsonSerializer.Deserialize<PaymentProcessedEvent>(body);
 
@@ -64,35 +92,27 @@ namespace FCG_Libraries.Consumer.Consumers
                 using var scope = _scopeFactory.CreateScope();
                 var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
 
-                var item = await repo.GetByIdAsync(Guid.Parse(evt.OrderId.ToString()));
+                var libItens = await repo.GetLibrariesAsync(l => l.PaymentId == Guid.Parse(evt.AggregateId));
 
-                if (item is not null)
+                if(evt.PaymentStatus == EPaymentStatus.Failed)
                 {
-                    item.UpdateStatus(EOrderStatus.Failed);
-                    await repo.UpdateAsync(item);
+                    foreach (var item in libItens)
+                    {
+                        item.UpdateStatus(EOrderStatus.Failed);
+                        await repo.UpdateAsync(item);
+                    }
                 }
-            }
-        }
-
-        private async Task HandlePaymentAprovedEvent(string body)
-        {
-            var evt = JsonSerializer.Deserialize<PaymentProcessedEvent>(body);
-
-            if (evt is not null)
-            {
-                using var scope = _scopeFactory.CreateScope();
-                var repo = scope.ServiceProvider.GetRequiredService<ILibraryRepository>();
-
-                var item = await repo.GetByIdAsync(Guid.Parse(evt.OrderId.ToString()));
-
-                if (item is not null)
+                else
                 {
-                    item.UpdateStatus(EOrderStatus.Owned);
-                    await repo.UpdateAsync(item);
+                    foreach (var item in libItens)
+                    {
+                        item.UpdateStatus(EOrderStatus.Owned);
+                        await repo.UpdateAsync(item);
+                    }
                 }
+                
             }
-
-        }
+        }                
 
         private Task OnErrorAsync(ProcessErrorEventArgs args)
         {

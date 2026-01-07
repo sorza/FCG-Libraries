@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FCG_Libraries.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260105030827_Initial")]
+    [Migration("20260105232311_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -38,7 +38,12 @@ namespace FCG_Libraries.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("GameId");
 
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PaymentId");
+
                     b.Property<decimal?>("PricePaid")
+                        .IsRequired()
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)")
                         .HasColumnName("PricePaid");

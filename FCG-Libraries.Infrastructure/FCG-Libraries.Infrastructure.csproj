@@ -28,4 +28,8 @@
     <ProjectReference Include="..\FCG-Libraries.Domain\FCG-Libraries.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

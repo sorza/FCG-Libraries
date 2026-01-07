@@ -5,6 +5,7 @@ namespace FCG_Libraries.Application.Shared.Interfaces
 {
     public interface ILibraryRepository : IRepository<Library>
     {
-        Task<bool> ExistsAsync(LibraryRequest request, CancellationToken cancellationToken = default);          
+        Task<bool> ExistsAsync(LibraryRequest request, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Library>> GetLibrariesAsync(Func<Library, bool> predicate, CancellationToken cancellationToken = default);
     }
 }

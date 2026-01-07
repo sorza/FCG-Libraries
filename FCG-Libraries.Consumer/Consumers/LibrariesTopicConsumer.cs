@@ -1,5 +1,4 @@
-﻿
-using Azure.Messaging.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
 using FCG.Shared.Contracts.Events.Domain.Libraries;
 using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Shared.Interfaces;

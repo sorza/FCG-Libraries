@@ -109,50 +109,29 @@ namespace FCG_Libraries.Application.Libraries.Services
 
         public async Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByGameIdAsync(Guid gameId, CancellationToken cancellationToken = default)
         {
-            var result = await repository.GetAllAsync(cancellationToken);
-
-            var libraries = result
-                .Where(library => library.GameId == gameId)
-                .Select(library => new LibraryResponse(
-                    ItemId: library.Id,
-                    UserId: library.UserId,
-                    GameId: library.GameId,
-                    Status: library.Status,
-                    PricePaid: library.PricePaid));
-
-            return Result.Success(libraries);
+            var result = await repository.GetLibrariesAsync(library => library.GameId == gameId);
+            return Result.Success(result.Select(l => new LibraryResponse(l.Id, l.UserId, l.GameId, l.Status, l.PricePaid)));
         }
 
-        public async Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<Result<IEnumerable<LibraryResponse>>> GetAcquiredItemsByUser(Guid userId, CancellationToken cancellationToken = default)
         {
-            var result = await repository.GetAllAsync(cancellationToken);
-
-            var libraries = result
-                .Where(library => library.UserId == userId)
-                .Select(library => new LibraryResponse(
-                    ItemId: library.Id,
-                    UserId: library.UserId,
-                    GameId: library.GameId,
-                    Status: library.Status,
-                    PricePaid: library.PricePaid));
-
-            return Result.Success(libraries);
+            var result = await repository.GetLibrariesAsync(library => library.UserId == userId && library.Status == EOrderStatus.Owned);
+            return Result.Success(result.Select(l => new LibraryResponse(l.Id, l.UserId, l.GameId, l.Status, l.PricePaid)));
+        }
+        
+        public async Task<Result<IEnumerable<LibraryResponse>>> GetRequestedItemsByUser(Guid userId, CancellationToken cancellationToken = default)
+        {
+            var result = await repository.GetLibrariesAsync(library => library.UserId == userId && library.Status != EOrderStatus.Owned);
+            return Result.Success(result.Select(l => new LibraryResponse(l.Id, l.UserId, l.GameId, l.Status, l.PricePaid)));
         }
 
         public async Task<Result<LibraryResponse>> GetLibraryByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var result = await repository.GetByIdAsync(id, cancellationToken);
+            var result = await repository.GetByIdAsync(id);
             if (result is null)
-                return Result.Failure<LibraryResponse>(new Error("404", "Item da biblioteca não encontrado."));
+                return Result.Failure<LibraryResponse>(new Error("404", "Item não encontrado"));
 
-            var libraryResponse = new LibraryResponse(
-                ItemId: result.Id,
-                UserId: result.UserId,
-                GameId: result.GameId,
-                Status: result.Status,
-                PricePaid: result.PricePaid);
-
-            return Result.Success(libraryResponse);
+            return Result.Success(new LibraryResponse(result.Id, result.UserId, result.GameId, result.Status, result.PricePaid));
         }       
 
         public async Task<Result<LibraryResponse>> UpdateStatusAsync(Guid id, EOrderStatus status, string correlationId, CancellationToken cancellationToken = default)
@@ -181,6 +160,13 @@ namespace FCG_Libraries.Application.Libraries.Services
                 GameId: libraryItem.GameId,
                 Status: libraryItem.Status,
                 PricePaid: libraryItem.PricePaid));
+        }
+    
+        public async Task<Result<IEnumerable<LibraryResponse>>> GetLibrariesByPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default)
+        {
+            var result = await repository.GetLibrariesAsync(library => library.PaymentId == paymentId);
+            return Result.Success(result.Select(l => new LibraryResponse(l.Id, l.UserId, l.GameId, l.Status, l.PricePaid)));
+
         }
     }
 }

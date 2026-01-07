@@ -35,7 +35,12 @@ namespace FCG_Libraries.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("GameId");
 
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PaymentId");
+
                     b.Property<decimal?>("PricePaid")
+                        .IsRequired()
                         .HasPrecision(12, 2)
                         .HasColumnType("decimal(12,2)")
                         .HasColumnName("PricePaid");

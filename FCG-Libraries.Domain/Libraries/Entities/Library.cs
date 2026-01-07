@@ -28,6 +28,7 @@ namespace FCG_Libraries.Domain.Libraries.Entities
         public Guid GameId { get; private set; }
         public EOrderStatus Status { get; private set; }
         public decimal? PricePaid { get; private set; }
+        public Guid? PaymentId { get; private set; }
         #endregion
 
         #region Factory Methods
@@ -54,6 +55,18 @@ namespace FCG_Libraries.Domain.Libraries.Entities
         {
             if (!Enum.IsDefined(typeof(EOrderStatus), status))
                 throw new InvalidStatusException(ErrorMessage.Library.InvalidStatus);
+
+            Status = status;
+
+            UpdateLastDateChanged();
+        }
+
+        public void UpdatePaymentId(Guid paymentId)
+        {
+            if (paymentId == Guid.Empty)
+                throw new ArgumentException("Código de pagamento inválido.");
+
+            PaymentId = paymentId;
 
             UpdateLastDateChanged();
         }

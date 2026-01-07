@@ -28,6 +28,10 @@ namespace FCG_Libraries.Infrastructure.Libraries.Mappings
             builder.Property(x=> x.PricePaid)
                 .HasColumnName("PricePaid")
                 .HasPrecision(12, 2)
+                .IsRequired(true);
+
+            builder.Property(x => x.PaymentId)
+                .HasColumnName("PaymentId")
                 .IsRequired(false);
 
         }

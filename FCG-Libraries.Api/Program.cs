@@ -2,8 +2,6 @@ using FCG_Libraries.Api.Middlewares;
 using FCG_Libraries.Application.Shared;
 using FCG_Libraries.Infrastructure.Shared;
 using FCG_Libraries.Infrastructure.Shared.Context;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -40,10 +38,10 @@ namespace FCG_Libraries.Api
                 c.IncludeXmlComments(xmlPath);
             });
 
-            builder.WebHost.ConfigureKestrel(options =>
+           /* builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenAnyIP(80); 
-            });
+            });*/
             
             var app = builder.Build();
 
@@ -75,16 +73,7 @@ namespace FCG_Libraries.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers();
-
-            app.MapGet("/health", () =>
-            {
-                return Results.Ok(new
-                {
-                    status = "Healthy",
-                    timestamp = DateTime.UtcNow
-                });
-            });
+            app.MapControllers();           
 
             app.Run();
         }
