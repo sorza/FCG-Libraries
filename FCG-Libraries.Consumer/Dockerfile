@@ -1,21 +1,19 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["FCG-Libraries.Api/FCG-Libraries.Api.csproj", "FCG-Libraries.Api/"]
+COPY ["FCG-Libraries.Consumer/FCG-Libraries.Consumer.csproj", "FCG-Libraries.Consumer/"]
 COPY ["FCG-Libraries.Application/FCG-Libraries.Application.csproj", "FCG-Libraries.Application/"]
 COPY ["FCG-Libraries.Domain/FCG-Libraries.Domain.csproj", "FCG-Libraries.Domain/"]
 COPY ["FCG-Libraries.Infrastructure/FCG-Libraries.Infrastructure.csproj", "FCG-Libraries.Infrastructure/"]
 
-RUN dotnet restore "FCG-Libraries.Api/FCG-Libraries.Api.csproj"
+RUN dotnet restore "FCG-Libraries.Consumer/FCG-Libraries.Consumer.csproj"
 
 COPY . ./
-WORKDIR "/src/FCG-Libraries.Api"
-RUN dotnet publish "FCG-Libraries.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+WORKDIR "/src/FCG-Libraries.Consumer"
+RUN dotnet publish "FCG-Libraries.Consumer.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish ./
 
-ENV ASPNETCORE_URLS="http://+:80"
-EXPOSE 80
-ENTRYPOINT ["dotnet", "FCG-Libraries.Api.dll"]
+ENTRYPOINT ["dotnet", "FCG-Libraries.Consumer.dll"]
