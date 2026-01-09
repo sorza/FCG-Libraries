@@ -2,7 +2,10 @@ using FCG_Libraries.Api.Middlewares;
 using FCG_Libraries.Application.Shared;
 using FCG_Libraries.Infrastructure.Shared;
 using FCG_Libraries.Infrastructure.Shared.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace FCG_Libraries.Api
@@ -12,7 +15,6 @@ namespace FCG_Libraries.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-           // builder.WebHost.UseUrls("http://0.0.0.0:80");
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -36,12 +38,59 @@ namespace FCG_Libraries.Api
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Description = "Digite seu token"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id   = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
 
-           /* builder.WebHost.ConfigureKestrel(options =>
+            builder.Services
+            .AddAuthentication(options =>
             {
-                options.ListenAnyIP(80); 
-            });*/
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                    Convert.FromBase64String(builder.Configuration["Jwt:Key"]!))
+                };
+            });
+
+            builder.Services.AddAuthorization();
             
             var app = builder.Build();
 

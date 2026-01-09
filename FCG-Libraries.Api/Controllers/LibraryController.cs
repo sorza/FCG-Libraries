@@ -1,12 +1,14 @@
 ﻿using FCG.Shared.Contracts.Results;
 using FCG_Libraries.Application.Libraries.Requests;
 using FCG_Libraries.Application.Shared.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FCG_Libraries.Api.Controllers
 {
     [ApiController]
     [Route("api")]
+    [Authorize]
     public class LibraryController(ILibraryService service) : ControllerBase
     {
         /// <summary>
@@ -45,6 +47,7 @@ namespace FCG_Libraries.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">Token que monitora o cancelamento do processo.</param>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = "Admin")]
         [HttpGet("all")]
         public async Task<IResult> GetAllLibrariesAsync(CancellationToken cancellationToken = default)
             => TypedResults.Ok((await service.GetAllLibrariesAsync(cancellationToken)).Value);
@@ -183,6 +186,7 @@ namespace FCG_Libraries.Api.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IResult> DeleteLibraryAsync(Guid id, CancellationToken cancellationToken = default)
         {
