@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FCG_Libraries.Api.Controllers
 {
     [ApiController]
-    [Route("libraries")]
+    [Route("api")]
     public class LibraryController(ILibraryService service) : ControllerBase
     {
         /// <summary>
