@@ -159,6 +159,7 @@ namespace FCG_Libraries.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IResult> GetLibraryByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {            
             var result = await service.GetLibraryByIdAsync(id, cancellationToken);
