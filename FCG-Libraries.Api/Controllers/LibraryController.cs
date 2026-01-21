@@ -208,13 +208,5 @@ namespace FCG_Libraries.Api.Controllers
             return TypedResults.Accepted($"/libraries/status/{correlationId}", new { ItemId = id, CorrelationId = correlationId });
 
         }
-
-        /// <summary>
-        /// Retorna 220 se a aplicação estiver saudável.
-        /// </summary>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [AllowAnonymous]
-        [HttpGet("/health")]
-        public async Task<IResult> Health() => TypedResults.Ok();
     }
 }
