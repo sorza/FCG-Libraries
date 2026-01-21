@@ -61,6 +61,7 @@ namespace FCG_Libraries.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("payments/{paymentId}")]
+        [AllowAnonymous]
         public async Task<IResult> GetLibrariesByPaymentIdAsync(Guid paymentId, CancellationToken cancellationToken = default)
         {
             var result = await service.GetLibrariesByPaymentAsync(paymentId, cancellationToken);
