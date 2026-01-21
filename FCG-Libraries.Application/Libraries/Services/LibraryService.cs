@@ -30,13 +30,13 @@ namespace FCG_Libraries.Application.Libraries.Services
                 return Result.Failure<LibraryResponse>(new Error("409", "Este item já existe na biblioteca do usuário."));
 
             var gamesClient = httpClient.CreateClient("GamesApi");
-            var gameResponse = await gamesClient.GetAsync(request.GameId.ToString(), cancellationToken);
+            var gameResponse = await gamesClient.GetAsync($"api/{request.GameId}", cancellationToken);
 
             if (!gameResponse.IsSuccessStatusCode)
                 return Result.Failure<LibraryResponse>(new Error("404", "Jogo não cadastrado."));
 
             var userClient = httpClient.CreateClient("UsersApi");
-            var userResponse = await userClient.GetAsync(request.UserId.ToString(), cancellationToken);
+            var userResponse = await userClient.GetAsync($"api/{request.UserId}", cancellationToken);
 
             if (!userResponse.IsSuccessStatusCode)
                 return Result.Failure<LibraryResponse>(new Error("404", "Usuário não cadastrado."));
