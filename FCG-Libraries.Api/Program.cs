@@ -97,25 +97,25 @@ namespace FCG_Libraries.Api
             app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
 
-                var retries = 5;
-                while (retries > 0)
-                {
-                    try
-                    {
-                        db.Database.Migrate();
-                        break;
-                    }
-                    catch
-                    {
-                        retries--;
-                        Thread.Sleep(2000); 
-                    }
-                }
-            }
+            //    var retries = 5;
+            //    while (retries > 0)
+            //    {
+            //        try
+            //        {
+            //            db.Database.Migrate();
+            //            break;
+            //        }
+            //        catch
+            //        {
+            //            retries--;
+            //            Thread.Sleep(2000); 
+            //        }
+            //    }
+            //}
 
             app.UseSwagger();
             app.UseSwaggerUI();
