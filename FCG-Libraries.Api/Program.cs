@@ -106,7 +106,7 @@ namespace FCG_Libraries.Api
             {
                 using (var scope = app.Services.CreateScope())
                 {
-                    var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
 
                     var retries = 5;
                     while (retries > 0)
