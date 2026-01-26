@@ -17,6 +17,11 @@ namespace FCG_Libraries.Consumer
             var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
+                    services.AddApplicationInsightsTelemetryWorkerService(options =>
+                    {
+                        options.ConnectionString = context.Configuration["ApplicationInsights:ConnectionString"];
+                    });
+
                     services.AddDbContext<LibraryDbContext>(options =>
                         options.UseSqlServer(context.Configuration.GetConnectionString("DefaultConnection")));
 
