@@ -52,6 +52,6 @@ jobs:
     
     - name: Deploy to AKS
       run: |
-        kubectl apply -f ../k8s/shared/secretproviderclass-libraries.yaml
-        kubectl apply -f ../k8s/libraries/consumer/
+        kubectl apply -f k8s/secretproviderclass-libraries.yaml
+        kubectl apply -f k8s/consumer/
         kubectl rollout status deployment/libraries-consumer -n libraries --timeout=300s
