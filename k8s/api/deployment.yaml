@@ -19,7 +19,7 @@ spec:
       - name: libraries-api
         image: alexandresorza/fcg-libraries-api:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         volumeMounts:
         - name: secrets-store
           mountPath: "/mnt/secrets-store"
