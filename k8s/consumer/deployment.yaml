@@ -18,6 +18,7 @@ spec:
       containers:
       - name: libraries-consumer
         image: alexandresorza/fcg-libraries-consumer:latest
+        imagePullPolicy: Always
         volumeMounts:
         - name: secrets-store
           mountPath: "/mnt/secrets-store"
