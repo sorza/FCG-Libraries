@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: libraries-api-hpa
-  namespace: fcg-libraries
+  namespace: libraries
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
