@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: libraries-consumer
-  namespace: libraries
+  namespace: fcg-libraries
   labels:
     app: libraries-consumer
 spec:
